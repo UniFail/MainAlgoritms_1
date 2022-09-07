@@ -1,14 +1,16 @@
 import java.util.Arrays;
 
-public class StringListmImpl implements StringList {
+public class StringListImpl implements StringList {
     private int size;
     private String[] storage;
 
-    public StringListmImpl() {
+    public StringListImpl() {
+
         storage = new String[10];
     }
 
-    public StringListmImpl(int initSize) {
+    public StringListImpl(int initSize) {
+
         storage = new String[initSize];
     }
 
