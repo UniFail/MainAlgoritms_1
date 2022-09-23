@@ -2,27 +2,27 @@ import java.util.Arrays;
 
 public class IntegerListImpl {
     private int size;
-    private int[] storage;
+    private Integer[] storage;
 
     public IntegerListImpl() {
-        storage = new int[100000];
+        storage = new Integer[100000];
     }
 
     public IntegerListImpl(int initSize) {
 
-        storage = new int[initSize];
+        storage = new Integer[initSize];
     }
 
 
     public Integer add(int item) {
-        validatorSize();
+        growNeeded();
         validatorItem(item);
         storage[size++] = item;
         return item;
     }
 
     public Integer add(int index, int item) {
-        validatorSize();
+        growNeeded();
         validatorItem(item);
         validatorIndex(index);
         if (index == size) {
@@ -59,21 +59,10 @@ public class IntegerListImpl {
         return item;
     }
 
-    public boolean contains(int item) {
-        int min = 0;
-        int max = size;
-        while (min < max) {
-            int mid = (min + max) / 2;
-            if (item == storage[mid]){
-                return  true;
-            }
-            if (item < storage[mid]){
-                max = mid - 1;}
-                else{
-                    min = mid + 1;
-                }
-            }
-        return false;
+    public boolean contains(Integer item) {
+        Integer[] storageCopy = toArray();
+        sortInsertion(storageCopy);
+        return binarySearch(storageCopy,item);
     }
 
     public Integer indexOf(int item) {
@@ -99,9 +88,7 @@ public class IntegerListImpl {
         return storage[index];
     }
 
-    public boolean equals(IntegerList otherList) {
-        return Arrays.equals(this.toArray(), otherList.toArray());
-    }
+
 
     public Integer size() {
         return 0;
@@ -116,7 +103,7 @@ public class IntegerListImpl {
         size = 0;
     }
 
-    public int[] toArray() {
+    public Integer[] toArray() {
         return Arrays.copyOf(storage, size);
     }
 
@@ -132,9 +119,9 @@ public class IntegerListImpl {
         }
     }
 
-    private void validatorSize() {
+    private void growNeeded() {
         if (size == storage.length) {
-            throw new FullStorageException();
+            grow();
         }
     }
 
@@ -144,16 +131,61 @@ public class IntegerListImpl {
         }
     }
 
-    public int[] sortInsertion() {
-        for (int i = 1; i < size; i++) {
-            int temp = storage[i];
-            int j = i;
-            while (j > 0 && storage[j - 1] >= temp) {
-                storage[j] = storage[j - 1];
-                j--;
+    private void sortInsertion(Integer[] arr) {
+        quickSort(arr,0,arr.length);
+    }
+
+    private void quickSort(Integer [] arr, int begin, int end){
+       if (begin < end){
+           int partitonIndex = partition(arr,begin,end);
+           quickSort(arr,begin,partitonIndex);
+           quickSort(arr,partitonIndex + 1,end);
+
+       }
+    }
+    private int partition(Integer [] arr, int begin, int end){
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
             }
         }
-        return Arrays.copyOf(storage, size);
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+    }
+
+    private boolean binarySearch(Integer[] arr, Integer item){
+        int min = 0;
+        int max = arr.length - 1;
+
+        while (min < max){
+            int mid = (min + max)/2;
+            if (item.equals(arr[mid])){
+                return true;
+            }
+            if (item < arr[mid]){
+                max = mid - 1;
+            }
+            else {
+                min = mid + 1;
+            }
+        }
+        return false;
+    }
+
+    private void grow(){
+        storage = Arrays.copyOf(storage, size + size / 2);
     }
 
 

@@ -16,10 +16,7 @@ public class Main {
             integerList.add(random.nextInt(100));
         }
         long start = System.currentTimeMillis();
-        integerList.sortInsertion();
         System.out.println(System.currentTimeMillis() - start);
-
-        integerList.sortInsertion();
         System.out.println(integerList.contains(1));
         integerList.getAll();
 
